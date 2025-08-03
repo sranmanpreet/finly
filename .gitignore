@@ -1,0 +1,67 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+.cache/
+.next/
+out/
+coverage/
+
+# VS Code settings
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# dotenv environment variables
+.env
+.env.*
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+.venv/
+venv/
+ENV/
+env/
+.ipynb_checkpoints/
+
+# Jupyter Notebook checkpoints
+*.ipynb_checkpoints
+
+# Misc
+*.swp
+*.swo
+
+# Ignore frontend build artifacts
+frontend/build/
+frontend/dist/
+
+# Ignore backend cache
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/*.egg-info/
+backend/.venv/
+
+# Ignore sensitive or large files
