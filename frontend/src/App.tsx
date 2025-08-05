@@ -1,4 +1,5 @@
-import React, { useState, useRef, useMemo, ChangeEvent, RefObject } from "react";
+import React, { useState, useRef, useMemo, ChangeEvent } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FileUpload from "./components/FileUpload";
@@ -14,6 +15,8 @@ import useTransactions from "./hooks/useTransactions";
 import useDarkMode from "./hooks/useDarkMode";
 import { exportToCSV } from "./utils/csv";
 import EmptyState from "./components/EmptyState";
+import Home from "./pages/Home";
+import Categorizer from "./pages/Categorizer";
 
 // --- Type Definitions ---
 export interface Transaction {
@@ -136,79 +139,89 @@ function App() {
   }, [filteredTransactions, sortConfig]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+    <Router>
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4">
-        <FileUpload
-          file={file}
-          dragActive={dragActive}
-          inputRef={inputRef}
-          handleDrag={handleDrag}
-          handleDrop={handleDrop}
-          handleBrowseClick={handleBrowseClick}
-          handleFileChange={handleFileChange}
-          handleUpload={() => {}} // No-op, upload handled by useTransactions
-          loading={loading}
-          error={error}
-        />
+        <main className="flex-1 flex flex-col items-center justify-center p-4">
+          <Routes>
+            <Route path="/" element={
+              <>
+                <FileUpload
+                  file={file}
+                  dragActive={dragActive}
+                  inputRef={inputRef}
+                  handleDrag={handleDrag}
+                  handleDrop={handleDrop}
+                  handleBrowseClick={handleBrowseClick}
+                  handleFileChange={handleFileChange}
+                  handleUpload={() => {}} // No-op, upload handled by useTransactions
+                  loading={loading}
+                  error={error}
+                />
 
-        {transactions.length > 0 && <MetricsCards metrics={metrics} />}
+                {transactions.length > 0 && <MetricsCards metrics={metrics} />}
 
-        {transactions.length > 0 && (
-          <Filters
-            startDate={startDate}
-            endDate={endDate}
-            categoryFilter={categoryFilter}
-            search={search}
-            transactions={transactions}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            setCategoryFilter={setCategoryFilter}
-            setSearch={setSearch}
-            onReset={() => {
-              setStartDate("");
-              setEndDate("");
-              setCategoryFilter("");
-              setSearch("");
-            }}
-          />
-        )}
+                {transactions.length > 0 && (
+                  <Filters
+                    startDate={startDate}
+                    endDate={endDate}
+                    categoryFilter={categoryFilter}
+                    search={search}
+                    transactions={transactions}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                    setCategoryFilter={setCategoryFilter}
+                    setSearch={setSearch}
+                    onReset={() => {
+                      setStartDate("");
+                      setEndDate("");
+                      setCategoryFilter("");
+                      setSearch("");
+                    }}
+                  />
+                )}
 
-        {!loading && transactions.length === 0 && <EmptyState />}
+                {!loading && transactions.length === 0 && <EmptyState />}
 
-        {transactions.length > 0 && (
-          <TransactionsTable
-            filteredTransactions={sortedTransactions}
-            handleSort={handleSort}
-            page={page}
-            total={total}
-            limit={limit}
-            handlePrev={handlePrev}
-            handleNext={handleNext}
-            handleLimitChange={handleLimitChange}
-            sortConfig={sortConfig}
-          />
-        )}
+                {transactions.length > 0 && (
+                  <TransactionsTable
+                    filteredTransactions={sortedTransactions}
+                    handleSort={handleSort}
+                    page={page}
+                    total={total}
+                    limit={limit}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    handleLimitChange={handleLimitChange}
+                    sortConfig={sortConfig}
+                  />
+                )}
 
-        {categorySummary.length > 0 && <ChartCategoryPie categorySummary={categorySummary} />}
-        {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
-        {monthlyCategory.length > 0 && <ChartMonthlyCategory monthlyCategory={monthlyCategory} />}
-        {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
-        {incomeVsExpense.length > 0 && <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />}
+                {categorySummary.length > 0 && <ChartCategoryPie categorySummary={categorySummary} />}
+                {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
+                {monthlyCategory.length > 0 && <ChartMonthlyCategory monthlyCategory={monthlyCategory} />}
+                {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
+                {incomeVsExpense.length > 0 && <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />}
 
-        {transactions.length > 0 && (
-          <button
-            onClick={() => exportToCSV(sortedTransactions)}
-            className="mb-2 px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
-          >
-            Export CSV
-          </button>
-        )}
-      </main>
+                {transactions.length > 0 && (
+                  <button
+                    onClick={() => exportToCSV(sortedTransactions)}
+                    className="mb-2 px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
+                  >
+                    Export CSV
+                  </button>
+                )}
+              </>
+            } />
+            <Route path="/categorizer" element={<Categorizer />} />
+            {/* Add more routes as needed */}
+          </Routes>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
