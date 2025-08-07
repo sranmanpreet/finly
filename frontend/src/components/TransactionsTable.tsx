@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { Transaction, SortConfig } from "../App";
+import { Transaction, SortConfig } from "../types";
 
 interface TransactionsTableProps {
   filteredTransactions: Transaction[];
@@ -70,9 +70,9 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     </div>
     <div className="flex items-center justify-between mt-4">
       <button
-        onClick={handlePrev}
         disabled={page === 1}
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        onClick={handlePrev}
+        className="px-3 py-1 rounded bg-gray-200 mx-1 disabled:opacity-50"
       >
         Prev
       </button>
@@ -80,9 +80,9 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         Page {page} of {Math.ceil(total / limit) || 1}
       </span>
       <button
-        onClick={handleNext}
         disabled={page * limit >= total}
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        onClick={handleNext}
+        className="px-3 py-1 rounded bg-gray-200 mx-1 disabled:opacity-50"
       >
         Next
       </button>

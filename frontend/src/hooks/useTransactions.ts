@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { formatDate } from "../utils/format";
-import { Transaction, FiltersType } from "../App";
+import { Transaction, FiltersType } from "../types";
 
 interface Metrics {
   totalIncome: number;

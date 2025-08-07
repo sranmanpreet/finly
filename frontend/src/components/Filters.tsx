@@ -1,5 +1,5 @@
 import React from "react";
-import { Transaction } from "../App";
+import { Transaction } from "../types";
 
 interface FiltersProps {
   startDate: string;

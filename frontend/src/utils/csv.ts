@@ -1,4 +1,4 @@
-import { Transaction } from "../App";
+import { Transaction } from "../types";
 
 export function exportToCSV(transactions: Transaction[], filename = "transactions.csv") {
   const headers = ["date", "description", "amount", "category"];

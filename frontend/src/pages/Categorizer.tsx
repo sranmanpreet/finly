@@ -11,7 +11,7 @@ import ChartIncomeVsExpense from "../components/ChartIncomeVsExpense";
 import useTransactions from "../hooks/useTransactions";
 import { exportToCSV } from "../utils/csv";
 import EmptyState from "../components/EmptyState";
-import { Transaction, FiltersType, SortConfig } from "../App";
+import { FiltersType, SortConfig } from "../types";
 
 const Categorizer: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -109,10 +109,16 @@ const Categorizer: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-  // Apply sorting to filteredTransactions
+  // Determine if any filter is active
+  const isFilterActive = !!(startDate || endDate || categoryFilter || search);
+
+  // Use all transactions if no filter, else use filteredTransactions
+  const displayTransactions = isFilterActive ? filteredTransactions : transactions;
+
+  // Sorting
   const sortedTransactions = useMemo(() => {
-    if (!filteredTransactions) return [];
-    const txs = [...filteredTransactions];
+    if (!displayTransactions) return [];
+    const txs = [...displayTransactions];
     if (!sortConfig.key) return txs;
     return txs.sort((a, b) => {
       if (a[sortConfig.key] < b[sortConfig.key])
@@ -121,7 +127,14 @@ const Categorizer: React.FC = () => {
         return sortConfig.direction === "asc" ? 1 : -1;
       return 0;
     });
-  }, [filteredTransactions, sortConfig]);
+  }, [displayTransactions, sortConfig]);
+
+  // Pagination for table
+  const paginatedTransactions = useMemo(() => {
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    return sortedTransactions.slice(start, end);
+  }, [sortedTransactions, page, limit]);
 
   return (
     <div className="max-w-3xl mx-auto py-16 px-4">
@@ -138,15 +151,15 @@ const Categorizer: React.FC = () => {
         error={error}
       />
 
-      {transactions.length > 0 && <MetricsCards metrics={metrics} />}
+      {displayTransactions.length > 0 && <MetricsCards metrics={metrics} />}
 
-      {transactions.length > 0 && (
+      {displayTransactions.length > 0 && (
         <Filters
           startDate={startDate}
           endDate={endDate}
           categoryFilter={categoryFilter}
           search={search}
-          transactions={transactions}
+          transactions={displayTransactions}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
           setCategoryFilter={setCategoryFilter}
@@ -160,19 +173,19 @@ const Categorizer: React.FC = () => {
         />
       )}
 
-      {!loading && transactions.length === 0 && <EmptyState />}
+      {!loading && displayTransactions.length === 0 && <EmptyState />}
 
-      {transactions.length > 0 && (
+      {displayTransactions.length > 0 && (
         <TransactionsTable
-          filteredTransactions={sortedTransactions}
-          handleSort={handleSort}
+          filteredTransactions={paginatedTransactions}
           page={page}
-          total={total}
+          total={displayTransactions.length}
           limit={limit}
           handlePrev={handlePrev}
           handleNext={handleNext}
           handleLimitChange={handleLimitChange}
           sortConfig={sortConfig}
+          handleSort={handleSort}
         />
       )}
 
@@ -188,9 +201,9 @@ const Categorizer: React.FC = () => {
         <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />
       )}
 
-      {transactions.length > 0 && (
+      {displayTransactions.length > 0 && (
         <button
-          onClick={() => exportToCSV(sortedTransactions)}
+          onClick={() => exportToCSV(displayTransactions)}
           className="mb-2 px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
         >
           Export CSV
