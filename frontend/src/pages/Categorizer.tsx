@@ -120,6 +120,13 @@ const Categorizer: React.FC = () => {
     if (!displayTransactions) return [];
     const txs = [...displayTransactions];
     if (!sortConfig.key) return txs;
+    if (sortConfig.key === "credit" || sortConfig.key === "debit") {
+      return txs.sort((a, b) => {
+        const aVal = Number(a[sortConfig.key]) || 0;
+        const bVal = Number(b[sortConfig.key]) || 0;
+        return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+      });
+    }
     return txs.sort((a, b) => {
       if (a[sortConfig.key] < b[sortConfig.key])
         return sortConfig.direction === "asc" ? -1 : 1;
@@ -137,7 +144,7 @@ const Categorizer: React.FC = () => {
   }, [sortedTransactions, page, limit]);
 
   return (
-    <div className="max-w-3xl mx-auto py-16 px-4">
+    <div className="max-w-3xl mx-auto py-16 ">
       <FileUpload
         file={file}
         dragActive={dragActive}
@@ -151,9 +158,9 @@ const Categorizer: React.FC = () => {
         error={error}
       />
 
-      {displayTransactions.length > 0 && <MetricsCards metrics={metrics} />}
+      {file && <MetricsCards metrics={metrics} />}
 
-      {displayTransactions.length > 0 && (
+      {file && (
         <Filters
           startDate={startDate}
           endDate={endDate}
@@ -173,7 +180,9 @@ const Categorizer: React.FC = () => {
         />
       )}
 
-      {!loading && displayTransactions.length === 0 && <EmptyState />}
+      {!loading && displayTransactions.length === 0 && (
+        <EmptyState fileUploaded={!!file} />
+      )}
 
       {displayTransactions.length > 0 && (
         <TransactionsTable

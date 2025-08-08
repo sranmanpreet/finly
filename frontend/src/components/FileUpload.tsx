@@ -26,7 +26,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   error,
 }) => (
   <div
-    className={`bg-white shadow-md rounded-lg p-6 w-full max-w-xl mb-6 border-2 transition-colors duration-200 ${
+    className={`bg-white shadow-md rounded-lg p-6 w-full max-w-xl mx-auto mb-6 border-2 transition-colors duration-200 ${
       dragActive ? "border-blue-500" : "border-transparent"
     }`}
     onDragEnter={handleDrag}

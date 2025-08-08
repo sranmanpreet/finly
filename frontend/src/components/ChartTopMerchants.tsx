@@ -6,7 +6,7 @@ interface ChartTopMerchantsProps {
 }
 
 const ChartTopMerchants: React.FC<ChartTopMerchantsProps> = ({ topMerchants }) => (
-  <div className="w-full max-w-2xl bg-white shadow rounded-lg p-4 mt-6">
+  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded-lg p-4 mt-6">
     <h2 className="text-xl font-semibold mb-2">Top Merchants/Vendors</h2>
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={topMerchants}>

@@ -6,7 +6,7 @@ interface ChartIncomeVsExpenseProps {
 }
 
 const ChartIncomeVsExpense: React.FC<ChartIncomeVsExpenseProps> = ({ incomeVsExpense }) => (
-  <div className="w-full max-w-2xl bg-white shadow rounded-lg p-4 mt-6">
+  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded-lg p-4 mt-6">
     <h2 className="text-xl font-semibold mb-2">Income vs Expense Over Time</h2>
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={incomeVsExpense}>
