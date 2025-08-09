@@ -24,25 +24,25 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   handleLimitChange,
   sortConfig,
 }) => (
-  <div className="w-full max-w-4xl mx-auto bg-white shadow rounded-lg p-4 mb-6">
-    <h2 className="text-xl font-semibold mb-2">Transactions</h2>
+  <div className="w-full max-w-4xl mx-auto bg-white shadow rounded p-2 mb-3">
+    <h2 className="text-lg font-semibold mb-1">Transactions</h2>
     <div className="overflow-x-auto">
-      <table className="min-w-full table-auto">
+      <table className="min-w-full table-auto text-sm">
         <thead>
-          <tr className="bg-gray-200">
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort("date")}>
+          <tr className="bg-gray-100">
+            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("date")}>
               Date {sortConfig.key === "date" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort("description")}>
+            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("description")}>
               Description {sortConfig.key === "description" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort("credit")}>
+            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("credit")}>
               Credit {sortConfig.key === "credit" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort("debit")}>
+            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("debit")}>
               Debit {sortConfig.key === "debit" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort("category")}>
+            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("category")}>
               Category {sortConfig.key === "category" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
             </th>
           </tr>
@@ -50,17 +50,17 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         <tbody>
           {filteredTransactions.map((tx, idx) => (
             <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50" : ""}>
-              <td className="px-4 py-2">{tx.date}</td>
-              <td className="px-4 py-2">{tx.description ?? tx.narration}</td>
-              <td className="px-4 py-2">{tx.credit ?? ""}</td>
-              <td className="px-4 py-2">{tx.debit ?? ""}</td>
-              <td className="px-4 py-2">{tx.category}</td>
+              <td className="px-2 py-1">{tx.date}</td>
+              <td className="px-2 py-1">{tx.description ?? tx.narration}</td>
+              <td className="px-2 py-1 text-right">{tx.credit ?? ""}</td>
+              <td className="px-2 py-1 text-right">{tx.debit ?? ""}</td>
+              <td className="px-2 py-1">{tx.category}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-    <div className="flex items-center justify-between mt-4">
+    <div className="flex items-center justify-between mt-2">
       <button
         disabled={page === 1}
         onClick={handlePrev}

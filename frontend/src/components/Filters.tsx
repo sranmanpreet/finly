@@ -74,21 +74,24 @@ function getRangeDates(range: string): { start: string; end: string } {
       lastYear.setFullYear(today.getFullYear() - 1);
       start = lastYear.toISOString().slice(0, 10);
       break;
-    case "lastTwoYears":
+    case "lastTwoYears": {
       const lastTwoYears = new Date(today);
       lastTwoYears.setFullYear(today.getFullYear() - 2);
       start = lastTwoYears.toISOString().slice(0, 10);
       break;
-    case "lastThreeYears":
+    }
+    case "lastThreeYears": {
       const lastThreeYears = new Date(today);
       lastThreeYears.setFullYear(today.getFullYear() - 3);
       start = lastThreeYears.toISOString().slice(0, 10);
       break;
-    case "lastFiveYears":
+    }
+    case "lastFiveYears": {
       const lastFiveYears = new Date(today);
       lastFiveYears.setFullYear(today.getFullYear() - 5);
       start = lastFiveYears.toISOString().slice(0, 10);
       break;
+    }
     case "all":
     default:
       start = "";
@@ -132,12 +135,12 @@ const Filters: React.FC<FiltersProps> = ({
   }, [startDate, endDate]);
 
   return (
-    <div className="w-full max-w-4xl flex flex-wrap items-end gap-4 mb-4">
+    <div className="w-full max-w-4xl flex flex-wrap items-end gap-2 mb-2">
       {/* Quick Filter */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Quick Filter</label>
         <select
-          className="border rounded px-2 py-1"
+          className="border rounded px-1 py-1 text-sm"
           onChange={e => handleQuickRangeChange(e.target.value)}
           value={selectedQuickRange}
         >
@@ -155,7 +158,7 @@ const Filters: React.FC<FiltersProps> = ({
             setStartDate(e.target.value);
             setSelectedQuickRange("all");
           }}
-          className="border rounded px-2 py-1"
+          className="border rounded px-1 py-1 text-sm"
         />
       </div>
       <div>
@@ -167,7 +170,7 @@ const Filters: React.FC<FiltersProps> = ({
             setEndDate(e.target.value);
             setSelectedQuickRange("all");
           }}
-          className="border rounded px-2 py-1"
+          className="border rounded px-1 py-1 text-sm"
         />
       </div>
       <div>
@@ -175,7 +178,7 @@ const Filters: React.FC<FiltersProps> = ({
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
-          className="border rounded px-2 py-1"
+          className="border rounded px-1 py-1 text-sm"
         >
           <option value="">All</option>
           {[...new Set(transactions.map(tx => tx.category).filter(Boolean))].map(cat => (
@@ -190,7 +193,7 @@ const Filters: React.FC<FiltersProps> = ({
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search description..."
-          className="border rounded px-2 py-1 w-full"
+          className="border rounded px-1 py-1 text-sm w-full"
         />
       </div>
       <button

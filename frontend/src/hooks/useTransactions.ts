@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { parseDate } from "../utils/format";
 import Papa, { ParseResult } from "papaparse";
 import { Transaction, FiltersType } from "../types";
 
@@ -81,11 +82,12 @@ function processTransactions(raw: any[]): Transaction[] {
 }
 
 interface Metrics {
-  totalIncome: number;
-  totalExpenses: number;
-  netSavings: number;
+  totalCredit: number;
+  totalDebit: number;
+  netBalance: number;
   numTransactions: number;
-  avgMonthly: number;
+  avgCredit: number;
+  avgDebit: number;
 }
 
 interface UseTransactionsResult {
@@ -146,33 +148,45 @@ export default function useTransactions(
   // Filtering and metrics
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [metrics, setMetrics] = useState<Metrics>({
-    totalIncome: 0,
-    totalExpenses: 0,
-    netSavings: 0,
+    totalCredit: 0,
+    totalDebit: 0,
+    netBalance: 0,
     numTransactions: 0,
-    avgMonthly: 0,
+    avgCredit: 0,
+    avgDebit: 0,
   });
 
   useEffect(() => {
     let txs = [...transactions];
     const { startDate, endDate, categoryFilter, search } = filters || {};
+    console.log(txs.filter(tx => {
+        if (!tx.date) return false;
+        // Parse both dates to Date objects
+  const txDate = parseDate(tx.date);
+  const start = parseDate(startDate);
+  // Only compare if both dates are valid
+  if (!txDate || !start) return false;
+  return !(txDate.getTime() >= start.getTime());
+      }));
 
     // Date filter
     if (startDate)
       txs = txs.filter(tx => {
         if (!tx.date) return false;
         // Parse both dates to Date objects
-        const txDate = new Date(tx.date);
-        const start = new Date(startDate);
-        // Only compare if txDate is valid
-        return !isNaN(txDate.getTime()) && txDate >= start;
+  const txDate = parseDate(tx.date);
+  const start = parseDate(startDate);
+  if (!txDate || !start) return false;
+  return txDate.getTime() >= start.getTime();
       });
+      console.log(txs);
     if (endDate)
       txs = txs.filter(tx => {
         if (!tx.date) return false;
-        const txDate = new Date(tx.date);
-        const end = new Date(endDate);
-        return !isNaN(txDate.getTime()) && txDate <= end;
+  const txDate = parseDate(tx.date);
+  const end = parseDate(endDate);
+  if (!txDate || !end) return false;
+  return txDate.getTime() <= end.getTime();
       });
 
     // Category filter
@@ -192,22 +206,32 @@ export default function useTransactions(
 
     // Metrics
     const amountCol = "amount" in (txs[0] || {}) ? "amount" : "debit amount";
-    let totalIncome = 0, totalExpenses = 0, months = new Set<string>();
+    let totalCredit = 0, totalDebit = 0;
+    const monthsSet = new Set<string>();
     txs.forEach(tx => {
       const credit = Number(tx.credit) || 0;
       const debit = Number(tx.debit) || 0;
-      totalIncome += credit;
-      totalExpenses += debit;
-      if (tx.date) months.add(tx.date.slice(0, 7));
+      totalCredit += credit;
+      totalDebit += debit;
+      if (tx.date) {
+        const d = parseDate(tx.date);
+        if (d && !isNaN(d.getTime())) {
+          const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+          monthsSet.add(monthStr);
+        }
+      }
     });
-    const netSavings = totalIncome - totalExpenses;
-    const avgMonthly = months.size ? (totalIncome - totalExpenses) / months.size : 0;
+    const months = monthsSet.size;
+    const netBalance = totalCredit - totalDebit;
+    const avgCredit = months ? totalCredit / months : 0;
+    const avgDebit = months ? totalDebit / months : 0;
     setMetrics({
-      totalIncome,
-      totalExpenses,
-      netSavings,
+      totalCredit,
+      totalDebit,
+      netBalance,
       numTransactions: txs.length,
-      avgMonthly,
+      avgCredit,
+      avgDebit,
     });
 
     // Aggregations for widgets
@@ -228,8 +252,11 @@ export default function useTransactions(
       const monthly: Record<string, number> = {};
       txs.forEach(tx => {
         if (tx.date) {
-          const month = tx.date.slice(0, 7);
-          monthly[month] = (monthly[month] || 0) + (Number(tx[amountCol]) || 0);
+          const d = parseDate(tx.date);
+          if (d && !isNaN(d.getTime())) {
+            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            monthly[month] = (monthly[month] || 0) + (Number(tx[amountCol]) || 0);
+          }
         }
       });
       setMonthlyTrend(Object.entries(monthly).map(([month, amount]) => ({ month, amount })));
@@ -242,10 +269,13 @@ export default function useTransactions(
       const breakdown: Record<string, Record<string, number>> = {};
       txs.forEach(tx => {
         if (tx.date) {
-          const month = tx.date.slice(0, 7);
-          breakdown[month] = breakdown[month] || {};
-          const cat = tx.category || "Unclassified";
-          breakdown[month][cat] = (breakdown[month][cat] || 0) + (Number(tx[amountCol]) || 0);
+          const d = parseDate(tx.date);
+          if (d && !isNaN(d.getTime())) {
+            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            breakdown[month] = breakdown[month] || {};
+            const cat = tx.category || "Unclassified";
+            breakdown[month][cat] = (breakdown[month][cat] || 0) + (Number(tx[amountCol]) || 0);
+          }
         }
       });
       setMonthlyCategory(
@@ -274,23 +304,25 @@ export default function useTransactions(
       setTopMerchants([]);
     }
 
-    // Income vs Expense
+    // Credit vs Debit over time
     if (txs.length) {
-      const monthly: Record<string, { income: number; expense: number }> = {};
+      const monthly: Record<string, { credit: number; debit: number }> = {};
       txs.forEach(tx => {
         if (tx.date) {
-          const month = tx.date.slice(0, 7);
-          monthly[month] = monthly[month] || { income: 0, expense: 0 };
-          const amt = Number(tx[amountCol]) || 0;
-          if (amt > 0) monthly[month].income += amt;
-          else monthly[month].expense += Math.abs(amt);
+          const d = parseDate(tx.date);
+          if (d && !isNaN(d.getTime())) {
+            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            monthly[month] = monthly[month] || { credit: 0, debit: 0 };
+            monthly[month].credit += Number(tx.credit) || 0;
+            monthly[month].debit += Number(tx.debit) || 0;
+          }
         }
       });
       setIncomeVsExpense(
-        Object.entries(monthly).map(([month, { income, expense }]) => ({
+        Object.entries(monthly).map(([month, { credit, debit }]) => ({
           month,
-          income,
-          expense,
+          credit,
+          debit,
         }))
       );
     } else {

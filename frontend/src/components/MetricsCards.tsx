@@ -1,11 +1,12 @@
 import React from "react";
 
 interface Metrics {
-  totalIncome: number;
-  totalExpenses: number;
-  netSavings: number;
+  totalCredit: number;
+  totalDebit: number;
+  netBalance: number;
   numTransactions: number;
-  avgMonthly: number;
+  avgCredit: number;
+  avgDebit: number;
 }
 
 interface MetricsCardsProps {
@@ -13,37 +14,43 @@ interface MetricsCardsProps {
 }
 
 const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics }) => (
-  <div className="w-full max-w-4xl grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-    <div className="bg-blue-50 dark:bg-gray-800 rounded p-3 text-center">
-      <div className="text-xs text-gray-500 dark:text-gray-400">Income</div>
-      <div className="text-lg font-bold text-green-700 dark:text-green-400">
-        ₹{metrics.totalIncome.toLocaleString()}
+  <div className="w-full max-w-4xl grid grid-cols-2 md:grid-cols-6 gap-2 mb-3">
+    <div className="bg-blue-50 dark:bg-gray-800 rounded p-2 text-center">
+      <div className="text-xs text-gray-500 dark:text-gray-400">Credit</div>
+      <div className="text-base font-semibold text-green-700 dark:text-green-400">
+        ₹{metrics.totalCredit.toLocaleString()}
       </div>
     </div>
-    <div className="bg-blue-50 rounded p-3 text-center">
-      <div className="text-xs text-gray-500">Expenses</div>
-      <div className="text-lg font-bold text-red-700">
-        ₹{metrics.totalExpenses.toLocaleString()}
+    <div className="bg-blue-50 rounded p-2 text-center">
+      <div className="text-xs text-gray-500">Debit</div>
+      <div className="text-base font-semibold text-red-700">
+        ₹{metrics.totalDebit.toLocaleString()}
       </div>
     </div>
-    <div className="bg-blue-50 rounded p-3 text-center">
-      <div className="text-xs text-gray-500">Net Savings</div>
+    <div className="bg-blue-50 rounded p-2 text-center">
+      <div className="text-xs text-gray-500">Net Balance</div>
       <div
-        className={`text-lg font-bold ${
-          metrics.netSavings >= 0 ? "text-green-700" : "text-red-700"
+        className={`text-base font-semibold ${
+          metrics.netBalance >= 0 ? "text-green-700" : "text-red-700"
         }`}
       >
-        ₹{metrics.netSavings.toLocaleString()}
+        ₹{metrics.netBalance.toLocaleString()}
       </div>
     </div>
-    <div className="bg-blue-50 rounded p-3 text-center">
+    <div className="bg-blue-50 rounded p-2 text-center">
       <div className="text-xs text-gray-500">Transactions</div>
-      <div className="text-lg font-bold">{metrics.numTransactions}</div>
+      <div className="text-base font-semibold">{metrics.numTransactions}</div>
     </div>
-    <div className="bg-blue-50 rounded p-3 text-center">
-      <div className="text-xs text-gray-500">Avg Monthly</div>
-      <div className="text-lg font-bold">
-        ₹{metrics.avgMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+    <div className="bg-blue-50 rounded p-2 text-center">
+      <div className="text-xs text-gray-500">Avg Credit</div>
+      <div className="text-base font-semibold">
+        ₹{metrics.avgCredit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+      </div>
+    </div>
+    <div className="bg-blue-50 rounded p-2 text-center">
+      <div className="text-xs text-gray-500">Avg Debit</div>
+      <div className="text-base font-semibold">
+        ₹{metrics.avgDebit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
       </div>
     </div>
   </div>

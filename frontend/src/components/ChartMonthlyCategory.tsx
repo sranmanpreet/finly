@@ -6,22 +6,22 @@ const COLORS = [
 ];
 
 interface ChartMonthlyCategoryProps {
-  monthlyCategory: any[]; // Replace 'any[]' with a more specific type if you have one
+  monthlyCategory: any[];
 }
 
 const ChartMonthlyCategory: React.FC<ChartMonthlyCategoryProps> = ({ monthlyCategory }) => (
-  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded-lg p-4 mt-6">
-    <h2 className="text-xl font-semibold mb-2">Monthly Category Breakdown</h2>
-    <ResponsiveContainer width="100%" height={300}>
+  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded p-2 mb-2">
+    <h2 className="text-base font-semibold mb-1">Monthly Category Breakdown</h2>
+    <ResponsiveContainer width="100%" height={220}>
       <BarChart data={monthlyCategory}>
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
+        <XAxis dataKey="month" fontSize={12} />
+        <YAxis fontSize={12} />
+        <Tooltip wrapperStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
         {Object.keys(monthlyCategory[0] || {})
           .filter(k => k !== "month")
           .map((cat, idx) => (
-            <Bar key={cat} dataKey={cat} stackId="a" fill={COLORS[idx % COLORS.length]} />
+            <Bar key={cat} dataKey={cat} stackId="a" fill={COLORS[idx % COLORS.length]} barSize={18} />
         ))}
       </BarChart>
     </ResponsiveContainer>

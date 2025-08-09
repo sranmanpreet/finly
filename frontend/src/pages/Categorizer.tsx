@@ -15,6 +15,7 @@ import { FiltersType, SortConfig } from "../types";
 
 const Categorizer: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(20);
 
@@ -144,19 +145,51 @@ const Categorizer: React.FC = () => {
   }, [sortedTransactions, page, limit]);
 
   return (
-    <div className="max-w-3xl mx-auto py-16 ">
-      <FileUpload
-        file={file}
-        dragActive={dragActive}
-        inputRef={inputRef}
-        handleDrag={handleDrag}
-        handleDrop={handleDrop}
-        handleBrowseClick={handleBrowseClick}
-        handleFileChange={handleFileChange}
-        handleUpload={() => {}} // No-op, upload handled by useTransactions
-        loading={loading}
-        error={error}
+    <div className="max-w-4xl mx-auto py-6 px-2">
+      {/* Hidden file input for changing file */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
       />
+
+      {!file ? (
+        <FileUpload
+          file={file}
+          dragActive={dragActive}
+          inputRef={inputRef}
+          handleDrag={handleDrag}
+          handleDrop={handleDrop}
+          handleBrowseClick={handleBrowseClick}
+          handleFileChange={handleFileChange}
+          handleUpload={() => {}} // No-op, upload handled by useTransactions
+          loading={loading}
+          error={error}
+        />
+      ) : (
+        <div className="flex justify-between items-center mb-3 bg-white shadow rounded p-2">
+          <div className="flex items-center">
+            <span className="text-blue-600 mr-2">📄</span>
+            <span className="text-sm text-gray-700 font-medium truncate max-w-xs">
+              {file.name}
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              // Open file picker immediately
+              if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+                fileInputRef.current.click();
+              }
+            }}
+            className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200"
+          >
+            Change File
+          </button>
+        </div>
+      )}
 
       {file && <MetricsCards metrics={metrics} />}
 
@@ -180,7 +213,7 @@ const Categorizer: React.FC = () => {
         />
       )}
 
-      {!loading && displayTransactions.length === 0 && (
+      {file && !loading && displayTransactions.length === 0 && (
         <EmptyState fileUploaded={!!file} />
       )}
 

@@ -10,9 +10,9 @@ interface ChartCategoryPieProps {
 }
 
 const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({ categorySummary }) => (
-  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded-lg p-4">
-    <h2 className="text-xl font-semibold mb-2">Category Summary</h2>
-    <ResponsiveContainer width="100%" height={300}>
+  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded p-2 mb-2">
+    <h2 className="text-base font-semibold mb-1">Category Summary</h2>
+    <ResponsiveContainer width="100%" height={220}>
       <PieChart>
         <Pie
           data={categorySummary}
@@ -20,15 +20,15 @@ const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({ categorySummary }) 
           nameKey="category"
           cx="50%"
           cy="50%"
-          outerRadius={100}
+          outerRadius={80}
           label
         >
           {categorySummary.map((entry, idx) => (
             <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip />
-        <Legend />
+        <Tooltip wrapperStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </ResponsiveContainer>
   </div>

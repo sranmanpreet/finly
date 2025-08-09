@@ -1,19 +1,27 @@
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface ChartTopMerchantsProps {
-  topMerchants: any[]; // Replace 'any[]' with a more specific type if you have one
+  topMerchants: any[];
 }
 
 const ChartTopMerchants: React.FC<ChartTopMerchantsProps> = ({ topMerchants }) => (
-  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded-lg p-4 mt-6">
-    <h2 className="text-xl font-semibold mb-2">Top Merchants/Vendors</h2>
-    <ResponsiveContainer width="100%" height={300}>
+  <div className="w-full max-w-2xl mx-auto bg-white shadow rounded p-2 mb-2">
+    <h2 className="text-base font-semibold mb-1">Top Merchants/Vendors</h2>
+    <ResponsiveContainer width="100%" height={220}>
       <BarChart data={topMerchants}>
-        <XAxis dataKey={"description" in (topMerchants[0] || {}) ? "description" : "narration"} />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey={"amount" in (topMerchants[0] || {}) ? "amount" : "debit amount"} fill="#8884d8" />
+        <XAxis
+          dataKey={"merchant" in (topMerchants[0] || {}) ? "merchant" : ("description" in (topMerchants[0] || {}) ? "description" : "narration")}
+          fontSize={12}
+        />
+        <YAxis fontSize={12} />
+        <Tooltip wrapperStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
+        <Bar
+          dataKey={"amount" in (topMerchants[0] || {}) ? "amount" : "debit amount"}
+          fill="#8884d8"
+          barSize={18}
+        />
       </BarChart>
     </ResponsiveContainer>
   </div>
