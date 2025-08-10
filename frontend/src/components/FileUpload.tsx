@@ -50,8 +50,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
       />
       <span className="text-2xl mb-1 text-blue-400">📂</span>
       <p className="text-gray-700 mb-0.5 text-sm">
-        Drag & drop your CSV file here, or{" "}
-        <span className="text-blue-600 underline cursor-pointer">browse</span>
+        Drag & drop your <b>CSV or Excel</b> file here, or{" "}
+        <span className="text-blue-600 underline cursor-pointer">browse</span> to select.
       </p>
       {file && <p className="text-green-600 mt-1 text-xs">Selected: {file.name}</p>}
     </div>

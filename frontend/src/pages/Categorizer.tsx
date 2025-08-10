@@ -1,6 +1,7 @@
 import ChartCoarseCategoryPie from "../components/ChartCoarseCategoryPie";
 import React, { useState, useRef, useMemo, ChangeEvent } from "react";
 import FileUpload from "../components/FileUpload";
+import FileEditor from "../components/FileEditor";
 import MetricsCards from "../components/MetricsCards";
 import Filters from "../components/Filters";
 import TransactionsTable from "../components/TransactionsTable";
@@ -16,6 +17,8 @@ import { FiltersType, SortConfig } from "../types";
 
 const Categorizer: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [rawData, setRawData] = useState<any[] | null>(null);
+  const [columnMap, setColumnMap] = useState<Record<string, string> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(20);
@@ -43,6 +46,7 @@ const Categorizer: React.FC = () => {
   });
 
   // useTransactions handles all data fetching and analytics
+  // If rawData is set, use it for useTransactions instead of file
   const {
     transactions,
     categorySummary,
@@ -56,12 +60,14 @@ const Categorizer: React.FC = () => {
     filteredTransactions,
     metrics,
     coarseCategorySummary
-  } = useTransactions(file, page, limit, filters);
+  } = useTransactions(rawData || file, page, limit, filters);
 
   // File upload handlers
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
+      setRawData(null);
+      setColumnMap(null);
       setPage(1);
     }
   };
@@ -148,6 +154,18 @@ const Categorizer: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-4 px-2 w-full overflow-x-hidden">
+      {!file && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-blue-900 text-sm">
+          <strong>Welcome to the Transaction Categorizer!</strong><br />
+          <ul className="list-disc ml-5 mt-1">
+            <li>Start by uploading your transaction file (CSV or Excel). Supported formats: .csv, .xls, .xlsx.</li>
+            <li>After upload, you can preview, map columns, and edit your data before processing.</li>
+            <li>Click <b>Process</b> to categorize and analyze your transactions. Charts and metrics will appear after processing.</li>
+            <li>Use <b>Change File</b> to upload a new file, or <b>Export Categorized Transactions</b> to download your results.</li>
+          </ul>
+          <span className="block mt-2">For best results, ensure your file contains columns for date, description, credit, and debit.</span>
+        </div>
+      )}
       {/* Hidden file input for changing file */}
       <input
         ref={fileInputRef}
@@ -166,106 +184,121 @@ const Categorizer: React.FC = () => {
           handleDrop={handleDrop}
           handleBrowseClick={handleBrowseClick}
           handleFileChange={handleFileChange}
-          handleUpload={() => {}} // No-op, upload handled by useTransactions
+          handleUpload={() => {}}
           loading={loading}
           error={error}
         />
-      ) : (
-        <div className="flex justify-between items-center mb-3 bg-white shadow rounded p-2">
-          <div className="flex items-center">
-            <span className="text-blue-600 mr-2">📄</span>
-            <span className="text-sm text-gray-700 font-medium truncate max-w-xs">
-              {file.name}
-            </span>
-          </div>
-          <button
-            onClick={() => {
-              // Open file picker immediately
-              if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-                fileInputRef.current.click();
-              }
-            }}
-            className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200"
-          >
-            Change File
-          </button>
-        </div>
-      )}
-
-      {file && (
-        <div className="w-full">
-          <MetricsCards metrics={metrics} />
-        </div>
-      )}
-
-      {file && (
-        <div className="w-full">
-          <Filters
-            startDate={startDate}
-            endDate={endDate}
-            categoryFilter={categoryFilter}
-            search={search}
-            transactions={displayTransactions}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            setCategoryFilter={setCategoryFilter}
-            setSearch={setSearch}
-            onReset={() => {
-              setStartDate("");
-              setEndDate("");
-              setCategoryFilter("");
-              setSearch("");
+      ) : !rawData ? (
+        <>
+          <FileEditor
+            file={file}
+            onProcess={(data, map) => {
+              setRawData(data);
+              setColumnMap(map);
             }}
           />
-        </div>
+        </>
+      ) : (
+        <>
+          <div className="flex justify-between items-center mb-3 bg-white shadow rounded p-2">
+            <div className="flex items-center">
+              <span className="text-blue-600 mr-2">📄</span>
+              <span className="text-sm text-gray-700 font-medium truncate max-w-xs">
+                {file.name}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  // Open file picker immediately
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                    fileInputRef.current.click();
+                  }
+                }}
+                className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200"
+                title="Upload a new file to start over."
+              >
+                Change File
+              </button>
+              {displayTransactions.length > 0 && (
+                <button
+                  onClick={() => exportToCSV(displayTransactions)}
+                  className="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded border border-green-600"
+                  title="Download the processed and categorized transactions as a CSV file."
+                >
+                  Export Categorized Transactions
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Only show dashboard widgets if rawData is set (i.e., after Process) */}
+          {rawData && (
+            <>
+              <div className="w-full">
+                <MetricsCards metrics={metrics} />
+              </div>
+              <div className="w-full">
+                <Filters
+                  startDate={startDate}
+                  endDate={endDate}
+                  categoryFilter={categoryFilter}
+                  search={search}
+                  transactions={displayTransactions}
+                  setStartDate={setStartDate}
+                  setEndDate={setEndDate}
+                  setCategoryFilter={setCategoryFilter}
+                  setSearch={setSearch}
+                  onReset={() => {
+                    setStartDate("");
+                    setEndDate("");
+                    setCategoryFilter("");
+                    setSearch("");
+                  }}
+                />
+              </div>
+              {!loading && displayTransactions.length === 0 && (
+                <EmptyState fileUploaded={!!file} />
+              )}
+              {displayTransactions.length > 0 && (
+                <TransactionsTable
+                  filteredTransactions={paginatedTransactions}
+                  page={page}
+                  total={displayTransactions.length}
+                  limit={limit}
+                  handlePrev={handlePrev}
+                  handleNext={handleNext}
+                  handleLimitChange={handleLimitChange}
+                  sortConfig={sortConfig}
+                  handleSort={handleSort}
+                />
+              )}
+              <div className="flex flex-col gap-4 w-full">
+                {categorySummary.length > 0 && (
+                  <ChartCategoryPie categorySummary={categorySummary} />
+                )}
+                {coarseCategorySummary.length > 0 && (
+                  <ChartCoarseCategoryPie data={coarseCategorySummary} />
+                )}
+              </div>
+              <div className="flex flex-col gap-4 w-full">
+                {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
+                {monthlyCategory.length > 0 && (
+                  <ChartMonthlyCategory monthlyCategory={monthlyCategory} />
+                )}
+                {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
+                {incomeVsExpense.length > 0 && (
+                  <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />
+                )}
+              </div>
+              {/* Export button moved above */}
+            </>
+          )}
+        </>
       )}
 
-      {file && !loading && displayTransactions.length === 0 && (
-        <EmptyState fileUploaded={!!file} />
-      )}
-
-      {displayTransactions.length > 0 && (
-        <TransactionsTable
-          filteredTransactions={paginatedTransactions}
-          page={page}
-          total={displayTransactions.length}
-          limit={limit}
-          handlePrev={handlePrev}
-          handleNext={handleNext}
-          handleLimitChange={handleLimitChange}
-          sortConfig={sortConfig}
-          handleSort={handleSort}
-        />
-      )}
-
-      <div className="flex flex-col gap-4 w-full">
-        {categorySummary.length > 0 && (
-          <ChartCategoryPie categorySummary={categorySummary} />
-        )}
-        {coarseCategorySummary.length > 0 && (
-          <ChartCoarseCategoryPie data={coarseCategorySummary} />
-        )}
-      </div>
-      <div className="flex flex-col gap-4 w-full">
-        {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
-        {monthlyCategory.length > 0 && (
-          <ChartMonthlyCategory monthlyCategory={monthlyCategory} />
-        )}
-        {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
-        {incomeVsExpense.length > 0 && (
-          <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />
-        )}
-      </div>
-
-      {displayTransactions.length > 0 && (
-        <button
-          onClick={() => exportToCSV(displayTransactions)}
-          className="mb-2 px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
-        >
-          Export CSV
-        </button>
-      )}
+  {/* All dashboard widgets are now only shown after Process (rawData) */}
     </div>
   );
 };

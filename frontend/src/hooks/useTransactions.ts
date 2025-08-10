@@ -195,8 +195,9 @@ interface UseTransactionsResult {
   metrics: Metrics;
 }
 
+type TransactionsInput = File | any[] | null;
 export default function useTransactions(
-  file: File | null,
+  input: TransactionsInput,
   page: number,
   limit: number,
   filters: FiltersType
@@ -213,28 +214,39 @@ export default function useTransactions(
 
   // Parse CSV and process transactions
   useEffect(() => {
-    if (!file) return;
+    if (!input) return;
     setLoading(true);
     setError("");
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results: ParseResult<any>) => {
-        try {
-          const processed = processTransactions(results.data);
-          setTransactions(processed);
-          setTotal(processed.length);
-        } catch (err) {
-          setError("Failed to process file.");
-        }
-        setLoading(false);
-      },
-      error: () => {
-        setError("Failed to parse CSV.");
-        setLoading(false);
-      },
-    });
-  }, [file]);
+    if (input instanceof File) {
+      Papa.parse(input, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results: ParseResult<any>) => {
+          try {
+            const processed = processTransactions(results.data);
+            setTransactions(processed);
+            setTotal(processed.length);
+          } catch (err) {
+            setError("Failed to process file.");
+          }
+          setLoading(false);
+        },
+        error: () => {
+          setError("Failed to parse CSV.");
+          setLoading(false);
+        },
+      });
+    } else if (Array.isArray(input)) {
+      try {
+        const processed = processTransactions(input);
+        setTransactions(processed);
+        setTotal(processed.length);
+      } catch (err) {
+        setError("Failed to process data.");
+      }
+      setLoading(false);
+    }
+  }, [input]);
 
   // Filtering and metrics
   const [filteredTransactions, setFilteredTransactions] = useState<

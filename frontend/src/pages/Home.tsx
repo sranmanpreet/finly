@@ -3,17 +3,21 @@ import { Link } from "react-router-dom";
 
 const Home: React.FC = () => (
   <div className="min-h-screen max-w-3xl mx-auto py-16 px-4 text-center bg-white dark:bg-gray-950 transition-colors duration-300">
-    {/* Hero Section */}
-    <h1 className="text-4xl font-bold mb-4 text-blue-700 dark:text-blue-200">Finly: Smarter Personal Finance</h1>
-    <p className="text-lg mb-8 text-gray-700 dark:text-gray-300">
-      <b>Finly</b> is your privacy-first personal finance dashboard. Effortlessly categorize your transactions, visualize your spending, and gain actionable insights—all from your own device.
-    </p>
-    <Link
-      to="/categorizer"
-      className="inline-block bg-blue-600 dark:bg-blue-800 text-white px-6 py-3 rounded shadow hover:bg-blue-700 dark:hover:bg-blue-900 transition mb-10"
-    >
-      Try the Transaction Categorizer
-    </Link>
+    {/* Hero Section with Image */}
+    <div className="flex flex-col items-center justify-center mb-8">
+  <img src="/finly-logo.png" alt="Finly Logo" className="w-32 h-32 mb-4 rounded-full shadow-lg border-2 border-blue-200" />
+      <h1 className="text-4xl font-bold mb-4 text-blue-700 dark:text-blue-200">Finly: Smarter Personal Finance</h1>
+      <p className="text-lg mb-4 text-gray-700 dark:text-gray-300 max-w-xl mx-auto">
+        <b>Finly</b> is your privacy-first personal finance dashboard. Effortlessly categorize your transactions, visualize your spending, and gain actionable insights—all from your own device.
+      </p>
+      <Link
+        to="/categorizer"
+        className="inline-block bg-blue-600 dark:bg-blue-800 text-white px-6 py-3 rounded shadow hover:bg-blue-700 dark:hover:bg-blue-900 transition mb-6"
+      >
+        Get Started: Transaction Categorizer
+      </Link>
+      <span className="text-sm text-gray-500 dark:text-gray-400">No sign-up required. Your data never leaves your device.</span>
+    </div>
 
     {/* Key Features */}
     <section className="mt-12 mb-12">
@@ -69,12 +73,16 @@ const Home: React.FC = () => (
       </ul>
     </section>
 
-    {/* Screenshots/Demo (Placeholder) */}
+    {/* Visual Demo Section */}
     <section className="mb-12">
       <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">See Finly in Action</h2>
-      <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-8 text-gray-400 dark:text-gray-500 mb-2">
-        <span className="text-5xl">📷</span>
-        <div className="mt-2">Screenshots coming soon!</div>
+      <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+  <img src="/finly-logo.png" alt="Finly Demo Screenshot" className="w-64 h-40 object-cover rounded-lg shadow border border-gray-200 dark:border-gray-800" />
+        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-6 text-gray-700 dark:text-gray-300 max-w-md">
+          <b>Instant Results:</b> Upload your file, map columns, and see your spending visualized in seconds.<br />
+          <b>Interactive Charts:</b> Explore your finances with pie charts, trends, and merchant breakdowns.<br />
+          <b>Export & Share:</b> Download your categorized transactions for further analysis or sharing.
+        </div>
       </div>
     </section>
 

@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, setDarkMode }) => {
       {/* Brand */}
       <div className="flex items-center space-x-8">
         <Link to="/" className="flex items-center text-2xl font-bold tracking-tight text-blue-700 dark:text-blue-300">
-          <span className="mr-2" role="img" aria-label="logo">💸</span>
+          <img src="/finly-logo.png" alt="Finly Logo" className="h-8 w-8 mr-2" />
           Finly
         </Link>
       </div>
@@ -22,8 +22,6 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, setDarkMode }) => {
       <div className="hidden md:flex items-center space-x-8">
         <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors">Home</Link>
         <Link to="/categorizer" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors">Transaction Categorizer</Link>
-        <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors">Reports</a>
-        <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors">Settings</a>
         <button
           onClick={() => setDarkMode((d) => !d)}
           className="ml-4 px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
@@ -47,8 +45,6 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, setDarkMode }) => {
         <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-900 shadow-md md:hidden flex flex-col items-center py-4 space-y-2 z-30">
           <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors" onClick={() => setMenuOpen(false)}>Home</Link>
           <Link to="/categorizer" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors" onClick={() => setMenuOpen(false)}>Transaction Categorizer</Link>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors" onClick={() => setMenuOpen(false)}>Reports</a>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-200 transition-colors" onClick={() => setMenuOpen(false)}>Settings</a>
           <button
             onClick={() => { setDarkMode((d) => !d); setMenuOpen(false); }}
             className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"

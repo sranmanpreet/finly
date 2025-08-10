@@ -4,7 +4,7 @@ export function formatCurrency(amount) {
 
 // Parse date string in dd/MM/YY or dd/MM/YYYY format
 export function parseDate(dateStr) {
-  if (!dateStr) return null;
+  if (!dateStr || typeof dateStr !== "string") return null;
   // dd/MM/YY or dd/MM/YYYY
   const parts = dateStr.split("/");
   if (parts.length === 3) {
