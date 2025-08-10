@@ -1,41 +1,43 @@
 import React from "react";
-import {
-  PieChart,
-  Pie,
-  Tooltip,
-  Legend,
-  Cell,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from "recharts";
 
-const COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff8042",
-  "#8dd1e1",
-  "#a4de6c",
-  "#d0ed57",
-  "#fa8072",
+const COARSE_COLORS = [
+  "#4ade80", // Income
+  "#fbbf24", // Essentials
+  "#60a5fa", // Discretionary
+  "#a78bfa", // Investments/Savings
+  "#f87171", // Transfers
+  "#94a3b8", // Other
 ];
 
-interface ChartCategoryPieProps {
-  categorySummary: any[];
+const COARSE_LABELS = [
+  "Income",
+  "Essentials",
+  "Discretionary",
+  "Investments/Savings",
+  "Transfers",
+  "Other",
+];
+
+interface CoarseCategoryData {
+  category: string;
+  amount: number;
 }
 
-const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({
-  categorySummary,
+interface ChartCoarseCategoryPieProps {
+  data: CoarseCategoryData[];
+}
+
+const ChartCoarseCategoryPie: React.FC<ChartCoarseCategoryPieProps> = ({
+  data,
 }) => {
-  if (!categorySummary || categorySummary.length === 0) return null;
-  const dataKey =
-    "amount" in (categorySummary[0] || {}) ? "amount" : "debit amount";
-  const total = categorySummary.reduce(
-    (sum, entry) => sum + Number(entry[dataKey]),
-    0
-  );
+  if (!data || data.length === 0) return null;
+  const total = data.reduce((sum, entry) => sum + Number(entry.amount), 0);
   return (
     <div className="w-full max-w-2xl mx-auto bg-white shadow rounded p-2 mb-2">
-      <h2 className="text-base font-semibold mb-1">Category Summary</h2>
+      <h2 className="text-base font-semibold mb-1">
+        Coarse Category Breakdown
+      </h2>
       <div className="text-xs text-gray-500 mb-2">
         Total: ₹{total.toLocaleString()}
       </div>
@@ -43,15 +45,18 @@ const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({
         <ResponsiveContainer width="60%" height={220}>
           <PieChart>
             <Pie
-              data={categorySummary}
-              dataKey={dataKey}
+              data={data}
+              dataKey="amount"
               nameKey="category"
               cx="50%"
               cy="50%"
               outerRadius={80}
             >
-              {categorySummary.map((entry, idx) => (
-                <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+              {data.map((entry, idx) => (
+                <Cell
+                  key={`cell-${idx}`}
+                  fill={COARSE_COLORS[idx % COARSE_COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip
@@ -67,8 +72,8 @@ const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({
           </PieChart>
         </ResponsiveContainer>
         <div className="flex flex-col gap-2 w-2/5">
-          {categorySummary.map((entry, idx) => {
-            const val = Number(entry[dataKey]);
+          {data.map((entry, idx) => {
+            const val = Number(entry.amount);
             const percent = total ? ((val / total) * 100).toFixed(1) : "0.0";
             return (
               <div
@@ -77,7 +82,9 @@ const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({
               >
                 <span
                   className="inline-block w-3 h-3 rounded-full"
-                  style={{ background: COLORS[idx % COLORS.length] }}
+                  style={{
+                    background: COARSE_COLORS[idx % COARSE_COLORS.length],
+                  }}
                 ></span>
                 <span className="font-medium text-gray-700 w-32 truncate">
                   {entry.category}
@@ -95,4 +102,4 @@ const ChartCategoryPie: React.FC<ChartCategoryPieProps> = ({
   );
 };
 
-export default ChartCategoryPie;
+export default ChartCoarseCategoryPie;

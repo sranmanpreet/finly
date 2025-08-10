@@ -1,3 +1,4 @@
+import ChartCoarseCategoryPie from "../components/ChartCoarseCategoryPie";
 import React, { useState, useRef, useMemo, ChangeEvent } from "react";
 import FileUpload from "../components/FileUpload";
 import MetricsCards from "../components/MetricsCards";
@@ -54,6 +55,7 @@ const Categorizer: React.FC = () => {
     error,
     filteredTransactions,
     metrics,
+    coarseCategorySummary
   } = useTransactions(file, page, limit, filters);
 
   // File upload handlers
@@ -145,7 +147,7 @@ const Categorizer: React.FC = () => {
   }, [sortedTransactions, page, limit]);
 
   return (
-    <div className="max-w-4xl mx-auto py-6 px-2">
+    <div className="max-w-4xl mx-auto py-4 px-2 w-full overflow-x-hidden">
       {/* Hidden file input for changing file */}
       <input
         ref={fileInputRef}
@@ -191,26 +193,32 @@ const Categorizer: React.FC = () => {
         </div>
       )}
 
-      {file && <MetricsCards metrics={metrics} />}
+      {file && (
+        <div className="w-full">
+          <MetricsCards metrics={metrics} />
+        </div>
+      )}
 
       {file && (
-        <Filters
-          startDate={startDate}
-          endDate={endDate}
-          categoryFilter={categoryFilter}
-          search={search}
-          transactions={displayTransactions}
-          setStartDate={setStartDate}
-          setEndDate={setEndDate}
-          setCategoryFilter={setCategoryFilter}
-          setSearch={setSearch}
-          onReset={() => {
-            setStartDate("");
-            setEndDate("");
-            setCategoryFilter("");
-            setSearch("");
-          }}
-        />
+        <div className="w-full">
+          <Filters
+            startDate={startDate}
+            endDate={endDate}
+            categoryFilter={categoryFilter}
+            search={search}
+            transactions={displayTransactions}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setCategoryFilter={setCategoryFilter}
+            setSearch={setSearch}
+            onReset={() => {
+              setStartDate("");
+              setEndDate("");
+              setCategoryFilter("");
+              setSearch("");
+            }}
+          />
+        </div>
       )}
 
       {file && !loading && displayTransactions.length === 0 && (
@@ -231,17 +239,24 @@ const Categorizer: React.FC = () => {
         />
       )}
 
-      {categorySummary.length > 0 && (
-        <ChartCategoryPie categorySummary={categorySummary} />
-      )}
-      {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
-      {monthlyCategory.length > 0 && (
-        <ChartMonthlyCategory monthlyCategory={monthlyCategory} />
-      )}
-      {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
-      {incomeVsExpense.length > 0 && (
-        <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />
-      )}
+      <div className="flex flex-col gap-4 w-full">
+        {categorySummary.length > 0 && (
+          <ChartCategoryPie categorySummary={categorySummary} />
+        )}
+        {coarseCategorySummary.length > 0 && (
+          <ChartCoarseCategoryPie data={coarseCategorySummary} />
+        )}
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        {monthlyTrend.length > 0 && <ChartMonthlyTrend monthlyTrend={monthlyTrend} />}
+        {monthlyCategory.length > 0 && (
+          <ChartMonthlyCategory monthlyCategory={monthlyCategory} />
+        )}
+        {topMerchants.length > 0 && <ChartTopMerchants topMerchants={topMerchants} />}
+        {incomeVsExpense.length > 0 && (
+          <ChartIncomeVsExpense incomeVsExpense={incomeVsExpense} />
+        )}
+      </div>
 
       {displayTransactions.length > 0 && (
         <button

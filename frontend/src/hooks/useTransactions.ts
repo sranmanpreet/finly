@@ -1,33 +1,117 @@
+// Map fine categories to coarse categories
+function getCoarseCategory(fine: string): string {
+  const lower = (fine || "").toLowerCase();
+  if (lower === "salary" || lower === "income") return "Income";
+  if (
+    [
+      "grocery",
+      "essentials",
+      "insurance",
+      "child education",
+      "education",
+      "society maintenance",
+      "house maintenance",
+      "rent",
+      "utility",
+      "atm",
+      "cash withdrawal",
+    ].some((c) => lower.includes(c))
+  )
+    return "Essentials";
+  if (
+    [
+      "eat out",
+      "entertainment",
+      "clothing",
+      "parking",
+      "transport",
+      "self care",
+      "internet/subscriptions",
+      "learning & development",
+      "gift",
+      "book",
+      "bookmyshow",
+      "travel",
+      "shopping",
+    ].some((c) => lower.includes(c))
+  )
+    return "Discretionary";
+  if (
+    ["investments", "investment", "ppf", "fd", "savings"].some((c) =>
+      lower.includes(c)
+    )
+  )
+    return "Investments/Savings";
+  if (
+    ["fund transfer", "transfer", "reimbursement"].some((c) =>
+      lower.includes(c)
+    )
+  )
+    return "Transfers";
+  return "Other";
+}
 import { useState, useEffect } from "react";
 import { parseDate } from "../utils/format";
 import Papa, { ParseResult } from "papaparse";
 import { Transaction, FiltersType } from "../types";
 
 // --- Categorization logic from backend ---
-function categorize(description: string, debitAmount?: number, existingCategory?: string): string {
+function categorize(
+  description: string,
+  debitAmount?: number,
+  existingCategory?: string
+): string {
   const desc = description?.toLowerCase() || "";
 
   // Regex-based rules (order matters)
   if (/stonewain.*pay|pay.*stonewain/.test(desc)) return "Salary";
   if (/stonewain.*park|park.*stonewain|parking/.test(desc)) return "Parking";
-  if (/fuel|car|harpreet bhar|irctc|cm auto|cab|cycle|train|alto|fronx|toll|transport/.test(desc)) return "Transport";
-  if (/dinner|lunch|icecream|pizza|cake|haldiram|zomato|swiggy|tea|fries|kheer|dosa|royal sweet|snack|jamun|kulcha|chaat|gappe|gappa|momo|food|juice|shake|donut|soup|restaurant/.test(desc)) return "Eat out";
+  if (
+    /fuel|car|harpreet bhar|irctc|cm auto|cab|cycle|train|alto|fronx|toll|transport/.test(
+      desc
+    )
+  )
+    return "Transport";
+  if (
+    /dinner|lunch|icecream|pizza|cake|haldiram|zomato|swiggy|tea|fries|kheer|dosa|royal sweet|snack|jamun|kulcha|chaat|gappe|gappa|momo|food|juice|shake|donut|soup|restaurant/.test(
+      desc
+    )
+  )
+    return "Eat out";
   if (/manavmangalsmartscho/.test(desc)) return "Child Education";
   if (/fiffin/.test(desc)) return "Essentials";
-  if (/paytmiccl|indianesign|indian clearing corp|ppf|fd through mobile|investment/.test(desc)) return "Investments";
+  if (
+    /paytmiccl|indianesign|indian clearing corp|ppf|fd through mobile|investment/.test(
+      desc
+    )
+  )
+    return "Investments";
   if (/sewerage|jtpl|resident welfare/.test(desc)) return "Society Maintenance";
   if (/insurance/.test(desc)) return "Insurance";
-  if (/grocery|smart bazaar|blinkit|vegetable|sweet|fruit|mandeep kumar|sunscreen|rakhi|indane|veg|onion|egg|fish|chicken|curd|boondi|paneer|mirch|pepper|bread|apple|banana|orange|anaar|grape|oil|flour|aata|atta|milk|jaggery|all out|chawal|dal/.test(desc)) return "Grocery";
-  if (/shoe|cloth|towel|jean|shirt|flipflop|myntra|crocs/.test(desc)) return "Clothing";
+  if (
+    /grocery|smart bazaar|blinkit|vegetable|sweet|fruit|mandeep kumar|sunscreen|rakhi|indane|veg|onion|egg|fish|chicken|curd|boondi|paneer|mirch|pepper|bread|apple|banana|orange|anaar|grape|oil|flour|aata|atta|milk|jaggery|all out|chawal|dal/.test(
+      desc
+    )
+  )
+    return "Grocery";
+  if (/shoe|cloth|towel|jean|shirt|flipflop|myntra|crocs/.test(desc))
+    return "Clothing";
   if (/atm|atw/.test(desc)) return "Cash Withdrawal";
   if (/transfer/.test(desc)) return "Fund Transfer";
   if (/medicine|lab tests|tabs/.test(desc)) return "Medicals";
   if (/hair cut|salon|beard|gym/.test(desc)) return "Self Care";
-  if (/airtel|jio|internet|air fiber/.test(desc)) return "Internet/Subscriptions";
-  if (/door|pot|mirror|table|repair|urbancompany|ac service|inverter|bath|lamp|pspcl|water tank|wire|pure it|paint|racks|wash basin|gutter|capacitor|grass|appliance/.test(desc)) return "House Maintenance";
+  if (/airtel|jio|internet|air fiber/.test(desc))
+    return "Internet/Subscriptions";
+  if (
+    /door|pot|mirror|table|repair|urbancompany|ac service|inverter|bath|lamp|pspcl|water tank|wire|pure it|paint|racks|wash basin|gutter|capacitor|grass|appliance/.test(
+      desc
+    )
+  )
+    return "House Maintenance";
   if (/ib billpay dr-hdfc92|si-tad/.test(desc)) return "Credit Card";
   if (/book/.test(desc)) return "Learning & Development";
-  if (/bookmyshow|gadget|toy|ride|cracker|travel/.test(desc)) return "Entertainment";
+  if (/bookmyshow|gadget|toy|ride|cracker|travel/.test(desc))
+    return "Entertainment";
   if (/birthday|gift/.test(desc)) return "Gifts";
   if (/reimbursement/.test(desc)) return "Reimbursement";
 
@@ -36,7 +120,9 @@ function categorize(description: string, debitAmount?: number, existingCategory?
     debitAmount !== undefined &&
     debitAmount < 200 &&
     debitAmount > 0 &&
-    (!existingCategory || existingCategory === "Uncategorized" || existingCategory === "Unclassified")
+    (!existingCategory ||
+      existingCategory === "Uncategorized" ||
+      existingCategory === "Unclassified")
   ) {
     return "Grocery";
   }
@@ -49,7 +135,11 @@ function categorize(description: string, debitAmount?: number, existingCategory?
 function processTransactions(raw: any[]): Transaction[] {
   return raw.map((tx: any) => {
     let narration = tx.narration || tx.description || "";
-    narration = narration.replace(/\d+/g, "").replace(/[^a-z\s]/gi, " ").replace(/upi|okicici|gpay/gi, "").trim();
+    narration = narration
+      .replace(/\d+/g, "")
+      .replace(/[^a-z\s]/gi, " ")
+      .replace(/upi|okicici|gpay/gi, "")
+      .trim();
     let category = tx.category || categorize(narration);
 
     // Normalize credit and debit fields
@@ -97,6 +187,7 @@ interface UseTransactionsResult {
   monthlyCategory: any[];
   topMerchants: any[];
   incomeVsExpense: any[];
+  coarseCategorySummary: { category: string; amount: number }[];
   total: number;
   loading: boolean;
   error: string;
@@ -141,12 +232,14 @@ export default function useTransactions(
       error: () => {
         setError("Failed to parse CSV.");
         setLoading(false);
-      }
+      },
     });
   }, [file]);
 
   // Filtering and metrics
-  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    Transaction[]
+  >([]);
   const [metrics, setMetrics] = useState<Metrics>({
     totalCredit: 0,
     totalDebit: 0,
@@ -159,56 +252,47 @@ export default function useTransactions(
   useEffect(() => {
     let txs = [...transactions];
     const { startDate, endDate, categoryFilter, search } = filters || {};
-    console.log(txs.filter(tx => {
-        if (!tx.date) return false;
-        // Parse both dates to Date objects
-  const txDate = parseDate(tx.date);
-  const start = parseDate(startDate);
-  // Only compare if both dates are valid
-  if (!txDate || !start) return false;
-  return !(txDate.getTime() >= start.getTime());
-      }));
 
     // Date filter
     if (startDate)
-      txs = txs.filter(tx => {
+      txs = txs.filter((tx) => {
         if (!tx.date) return false;
         // Parse both dates to Date objects
-  const txDate = parseDate(tx.date);
-  const start = parseDate(startDate);
-  if (!txDate || !start) return false;
-  return txDate.getTime() >= start.getTime();
+        const txDate = parseDate(tx.date);
+        const start = parseDate(startDate);
+        if (!txDate || !start) return false;
+        return txDate.getTime() >= start.getTime();
       });
-      console.log(txs);
+
     if (endDate)
-      txs = txs.filter(tx => {
+      txs = txs.filter((tx) => {
         if (!tx.date) return false;
-  const txDate = parseDate(tx.date);
-  const end = parseDate(endDate);
-  if (!txDate || !end) return false;
-  return txDate.getTime() <= end.getTime();
+        const txDate = parseDate(tx.date);
+        const end = parseDate(endDate);
+        if (!txDate || !end) return false;
+        return txDate.getTime() <= end.getTime();
       });
 
     // Category filter
     if (categoryFilter)
-      txs = txs.filter(tx => tx.category === categoryFilter);
+      txs = txs.filter((tx) => tx.category === categoryFilter);
 
     // Search filter
     if (search)
-      txs = txs.filter(
-        tx =>
-          (tx.description ?? tx.narration ?? "")
-            .toLowerCase()
-            .includes(search.toLowerCase())
+      txs = txs.filter((tx) =>
+        (tx.description ?? tx.narration ?? "")
+          .toLowerCase()
+          .includes(search.toLowerCase())
       );
 
     setFilteredTransactions(txs);
 
     // Metrics
     const amountCol = "amount" in (txs[0] || {}) ? "amount" : "debit amount";
-    let totalCredit = 0, totalDebit = 0;
+    let totalCredit = 0,
+      totalDebit = 0;
     const monthsSet = new Set<string>();
-    txs.forEach(tx => {
+    txs.forEach((tx) => {
       const credit = Number(tx.credit) || 0;
       const debit = Number(tx.debit) || 0;
       totalCredit += credit;
@@ -216,7 +300,9 @@ export default function useTransactions(
       if (tx.date) {
         const d = parseDate(tx.date);
         if (d && !isNaN(d.getTime())) {
-          const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+          const monthStr = `${d.getFullYear()}-${String(
+            d.getMonth() + 1
+          ).padStart(2, "0")}`;
           monthsSet.add(monthStr);
         }
       }
@@ -238,11 +324,16 @@ export default function useTransactions(
     // Category summary
     if (txs.length) {
       const summary: Record<string, number> = {};
-      txs.forEach(tx => {
+      txs.forEach((tx) => {
         const cat = tx.category || "Unclassified";
         summary[cat] = (summary[cat] || 0) + (Number(tx[amountCol]) || 0);
       });
-      setCategorySummary(Object.entries(summary).map(([category, amount]) => ({ category, amount })));
+      setCategorySummary(
+        Object.entries(summary).map(([category, amount]) => ({
+          category,
+          amount,
+        }))
+      );
     } else {
       setCategorySummary([]);
     }
@@ -250,16 +341,21 @@ export default function useTransactions(
     // Monthly trend
     if (txs.length) {
       const monthly: Record<string, number> = {};
-      txs.forEach(tx => {
+      txs.forEach((tx) => {
         if (tx.date) {
           const d = parseDate(tx.date);
           if (d && !isNaN(d.getTime())) {
-            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-            monthly[month] = (monthly[month] || 0) + (Number(tx[amountCol]) || 0);
+            const month = `${d.getFullYear()}-${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}`;
+            monthly[month] =
+              (monthly[month] || 0) + (Number(tx[amountCol]) || 0);
           }
         }
       });
-      setMonthlyTrend(Object.entries(monthly).map(([month, amount]) => ({ month, amount })));
+      setMonthlyTrend(
+        Object.entries(monthly).map(([month, amount]) => ({ month, amount }))
+      );
     } else {
       setMonthlyTrend([]);
     }
@@ -267,14 +363,17 @@ export default function useTransactions(
     // Monthly category breakdown
     if (txs.length) {
       const breakdown: Record<string, Record<string, number>> = {};
-      txs.forEach(tx => {
+      txs.forEach((tx) => {
         if (tx.date) {
           const d = parseDate(tx.date);
           if (d && !isNaN(d.getTime())) {
-            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            const month = `${d.getFullYear()}-${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}`;
             breakdown[month] = breakdown[month] || {};
             const cat = tx.category || "Unclassified";
-            breakdown[month][cat] = (breakdown[month][cat] || 0) + (Number(tx[amountCol]) || 0);
+            breakdown[month][cat] =
+              (breakdown[month][cat] || 0) + (Number(tx[amountCol]) || 0);
           }
         }
       });
@@ -291,9 +390,11 @@ export default function useTransactions(
     // Top merchants
     if (txs.length) {
       const merchantTotals: Record<string, number> = {};
-      txs.forEach(tx => {
+      txs.forEach((tx) => {
         const merchant = tx.description || tx.narration || "";
-        merchantTotals[merchant] = (merchantTotals[merchant] || 0) + Math.abs(Number(tx[amountCol]) || 0);
+        merchantTotals[merchant] =
+          (merchantTotals[merchant] || 0) +
+          Math.abs(Number(tx[amountCol]) || 0);
       });
       const sorted = Object.entries(merchantTotals)
         .sort((a, b) => b[1] - a[1])
@@ -307,11 +408,13 @@ export default function useTransactions(
     // Credit vs Debit over time
     if (txs.length) {
       const monthly: Record<string, { credit: number; debit: number }> = {};
-      txs.forEach(tx => {
+      txs.forEach((tx) => {
         if (tx.date) {
           const d = parseDate(tx.date);
           if (d && !isNaN(d.getTime())) {
-            const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            const month = `${d.getFullYear()}-${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}`;
             monthly[month] = monthly[month] || { credit: 0, debit: 0 };
             monthly[month].credit += Number(tx.credit) || 0;
             monthly[month].debit += Number(tx.debit) || 0;
@@ -330,6 +433,21 @@ export default function useTransactions(
     }
   }, [transactions, filters]);
 
+  // Coarse Category Breakdown (use filteredTransactions to respect filters)
+  let coarseCategorySummary: { category: string; amount: number }[] = [];
+  if (filteredTransactions.length) {
+    const coarseSummary: Record<string, number> = {};
+    filteredTransactions.forEach((tx) => {
+      const coarse = getCoarseCategory(tx.category || "");
+      coarseSummary[coarse] =
+        (coarseSummary[coarse] || 0) +
+        (Number(tx.amount || tx["debit amount"]) || 0);
+    });
+    coarseCategorySummary = Object.entries(coarseSummary).map(
+      ([category, amount]) => ({ category, amount })
+    );
+  }
+
   return {
     transactions,
     categorySummary,
@@ -337,6 +455,7 @@ export default function useTransactions(
     monthlyCategory,
     topMerchants,
     incomeVsExpense,
+    coarseCategorySummary,
     total: transactions.length,
     loading,
     error,
