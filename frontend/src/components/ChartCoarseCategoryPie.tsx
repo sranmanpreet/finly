@@ -34,12 +34,12 @@ const ChartCoarseCategoryPie: React.FC<ChartCoarseCategoryPieProps> = ({
   if (!data || data.length === 0) return null;
   const total = data.reduce((sum, entry) => sum + Number(entry.amount), 0);
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white shadow rounded p-2 mb-2">
-      <h2 className="text-base font-semibold mb-1">
+    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 shadow rounded p-2 mb-2">
+      <h2 className="text-base font-semibold mb-1 text-gray-800 dark:text-gray-100">
         Coarse Category Breakdown
       </h2>
-      <div className="text-xs text-gray-500 mb-2">
-        Total: ₹{total.toLocaleString()}
+      <div className="text-xs text-gray-500 dark:text-gray-300 mb-2">
+  Total: ₹{total.toLocaleString()}
       </div>
       <div className="flex flex-row gap-4 items-center">
         <ResponsiveContainer width="60%" height={220}>
@@ -90,7 +90,7 @@ const ChartCoarseCategoryPie: React.FC<ChartCoarseCategoryPieProps> = ({
                   {entry.category}
                 </span>
                 <span className="text-gray-500">
-                  ₹{val.toLocaleString()}{" "}
+                  ₹{val.toLocaleString()} <span className="ml-1">({percent}%)</span>
                   <span className="ml-1">({percent}%)</span>
                 </span>
               </div>

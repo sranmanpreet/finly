@@ -135,12 +135,12 @@ const Filters: React.FC<FiltersProps> = ({
   }, [startDate, endDate]);
 
   return (
-    <div className="w-full max-w-4xl flex flex-wrap items-end gap-2 mb-2">
+  <div className="w-full max-w-4xl flex flex-wrap items-end gap-2 mb-2">
       {/* Quick Filter */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Quick Filter</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Quick Filter</label>
         <select
-          className="border rounded px-1 py-1 text-sm"
+          className="border border-gray-300 dark:border-gray-700 rounded px-1 py-1 text-sm dark:bg-gray-800 dark:text-gray-100"
           onChange={e => handleQuickRangeChange(e.target.value)}
           value={selectedQuickRange}
         >
@@ -150,7 +150,7 @@ const Filters: React.FC<FiltersProps> = ({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Start Date</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Start Date</label>
         <input
           type="date"
           value={startDate}
@@ -158,11 +158,11 @@ const Filters: React.FC<FiltersProps> = ({
             setStartDate(e.target.value);
             setSelectedQuickRange("all");
           }}
-          className="border rounded px-1 py-1 text-sm"
+          className="border border-gray-300 dark:border-gray-700 rounded px-1 py-1 text-sm dark:bg-gray-800 dark:text-gray-100"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">End Date</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">End Date</label>
         <input
           type="date"
           value={endDate}
@@ -170,15 +170,15 @@ const Filters: React.FC<FiltersProps> = ({
             setEndDate(e.target.value);
             setSelectedQuickRange("all");
           }}
-          className="border rounded px-1 py-1 text-sm"
+          className="border border-gray-300 dark:border-gray-700 rounded px-1 py-1 text-sm dark:bg-gray-800 dark:text-gray-100"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Category</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Category</label>
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
-          className="border rounded px-1 py-1 text-sm"
+          className="border border-gray-300 dark:border-gray-700 rounded px-1 py-1 text-sm dark:bg-gray-800 dark:text-gray-100"
         >
           <option value="">All</option>
           {[...new Set(transactions.map(tx => tx.category).filter(Boolean))].map(cat => (
@@ -187,18 +187,18 @@ const Filters: React.FC<FiltersProps> = ({
         </select>
       </div>
       <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700">Search</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Search</label>
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search description..."
-          className="border rounded px-1 py-1 text-sm w-full"
+          className="border border-gray-300 dark:border-gray-700 rounded px-1 py-1 text-sm w-full dark:bg-gray-800 dark:text-gray-100"
         />
       </div>
       <button
         onClick={onReset}
-        className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+        className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
       >
         Reset
       </button>

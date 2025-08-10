@@ -155,15 +155,15 @@ const Categorizer: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto py-4 px-2 w-full overflow-x-hidden">
       {!file && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-blue-900 text-sm">
-          <strong>Welcome to the Transaction Categorizer!</strong><br />
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded text-blue-900 dark:text-blue-100 text-sm">
+          <strong className="text-gray-800 dark:text-gray-100">Welcome to the Transaction Categorizer!</strong><br />
           <ul className="list-disc ml-5 mt-1">
             <li>Start by uploading your transaction file (CSV or Excel). Supported formats: .csv, .xls, .xlsx.</li>
             <li>After upload, you can preview, map columns, and edit your data before processing.</li>
             <li>Click <b>Process</b> to categorize and analyze your transactions. Charts and metrics will appear after processing.</li>
             <li>Use <b>Change File</b> to upload a new file, or <b>Export Categorized Transactions</b> to download your results.</li>
           </ul>
-          <span className="block mt-2">For best results, ensure your file contains columns for date, description, credit, and debit.</span>
+          <span className="block mt-2 text-gray-700 dark:text-gray-200">For best results, ensure your file contains columns for date, description, credit, and debit.</span>
         </div>
       )}
       {/* Hidden file input for changing file */}
@@ -200,10 +200,10 @@ const Categorizer: React.FC = () => {
         </>
       ) : (
         <>
-          <div className="flex justify-between items-center mb-3 bg-white shadow rounded p-2">
+          <div className="flex justify-between items-center mb-3 bg-white dark:bg-gray-900 shadow rounded p-2 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <span className="text-blue-600 mr-2">📄</span>
-              <span className="text-sm text-gray-700 font-medium truncate max-w-xs">
+              <span className="text-blue-600 dark:text-blue-400 mr-2">📄</span>
+              <span className="text-sm text-gray-700 dark:text-gray-100 font-medium truncate max-w-xs">
                 {file.name}
               </span>
             </div>
@@ -216,7 +216,7 @@ const Categorizer: React.FC = () => {
                     fileInputRef.current.click();
                   }
                 }}
-                className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200"
+                className="text-xs bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 px-2 py-1 rounded border border-blue-200 dark:border-blue-700"
                 title="Upload a new file to start over."
               >
                 Change File
@@ -224,7 +224,7 @@ const Categorizer: React.FC = () => {
               {displayTransactions.length > 0 && (
                 <button
                   onClick={() => exportToCSV(displayTransactions)}
-                  className="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded border border-green-600"
+                  className="text-xs bg-green-500 dark:bg-green-700 hover:bg-green-600 dark:hover:bg-green-800 text-white px-2 py-1 rounded border border-green-600 dark:border-green-700"
                   title="Download the processed and categorized transactions as a CSV file."
                 >
                   Export Categorized Transactions

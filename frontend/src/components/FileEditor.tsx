@@ -97,7 +97,7 @@ const FileEditor: React.FC<FileEditorProps> = ({ file, onProcess }) => {
   };
 
   return (
-  <div className="bg-white dark:bg-gray-900 shadow-xl rounded-lg p-4 mb-4 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
+  <div className="bg-white dark:bg-gray-900 shadow-xl rounded-lg p-2 sm:p-4 mb-4 w-full max-w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
   <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100 border-b pb-2 border-gray-200 dark:border-gray-700">File Editor & Column Mapper</h2>
   <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded text-blue-900 dark:text-blue-100 text-xs">
         <b>Instructions:</b> Use this editor to preview, map, and clean your transaction data before processing.<br />
@@ -108,35 +108,35 @@ const FileEditor: React.FC<FileEditorProps> = ({ file, onProcess }) => {
           <li>The <b>Process</b> button will be enabled once all required columns are mapped.</li>
         </ul>
       </div>
-      <div className="mb-4 flex flex-wrap gap-6 items-center">
-        <div className="flex items-center gap-2">
+      <div className="mb-4 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center w-full">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
           <label className="font-semibold text-gray-700 dark:text-gray-200">Header row:</label>
           <select
             value={headerRowIdx}
             onChange={(e) => setHeaderRowIdx(Number(e.target.value))}
-            className="border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
+            className="border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100 max-w-full sm:max-w-xs"
           >
             {sheetData.map((row, idx) => (
               <option key={idx} value={idx}>
-                Row {idx + 1}: {row.slice(0, 5).join(", ")}
+                Row {idx + 1}: {row.slice(0, 5).join(", ").length > 40 ? row.slice(0, 5).join(", ").slice(0, 40) + "..." : row.slice(0, 5).join(", ")}
               </option>
             ))}
           </select>
         </div>
-        <div>
+        <div className="w-full">
           <h3 className="text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200">Column Mapping</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
             {EXPECTED_COLUMNS.map((col) => (
-              <div key={col} className="flex items-center gap-2">
+              <div key={col} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                 <span className="w-28 text-gray-700 dark:text-gray-200 font-medium">{col}</span>
                 <select
                   value={columnMap[col] || ""}
                   onChange={(e) => setColumnMap((prev) => ({ ...prev, [col]: e.target.value }))}
-                  className="border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
+                  className="border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100 max-w-full sm:max-w-xs"
                 >
                   <option value="">-- Not mapped --</option>
                   {sheetData[headerRowIdx]?.map((h: string, idx: number) => (
-                    <option key={idx} value={h}>{h}</option>
+                    <option key={idx} value={h}>{typeof h === "string" && h.length > 30 ? h.slice(0, 30) + "..." : h}</option>
                   ))}
                 </select>
               </div>
@@ -148,7 +148,7 @@ const FileEditor: React.FC<FileEditorProps> = ({ file, onProcess }) => {
         <div className="overflow-x-auto" style={{ scrollbarWidth: 'thin' }}>
           <div style={{ minWidth: '100%', overflowX: 'auto' }}>
             <button
-              className={`mb-3 px-4 py-1.5 font-semibold rounded transition-colors duration-150 ${allMapped ? "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800" : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"}`}
+              className={`mb-3 px-3 sm:px-4 py-1 sm:py-1.5 font-semibold rounded transition-colors duration-150 ${allMapped ? "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800" : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"}`}
               onClick={handleProcess}
               disabled={!allMapped}
             >
@@ -156,31 +156,31 @@ const FileEditor: React.FC<FileEditorProps> = ({ file, onProcess }) => {
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto" style={{ scrollbarWidth: 'thin' }}>
-          <table className="min-w-max w-full border border-gray-300 dark:border-gray-700 text-xs shadow-sm rounded-lg">
+        <div className="overflow-x-auto w-full" style={{ scrollbarWidth: 'thin' }}>
+          <table className="min-w-max w-full border border-gray-300 dark:border-gray-700 text-xs sm:text-sm shadow-sm rounded-lg">
             <thead>
               <tr className="bg-blue-50 dark:bg-blue-950">
                 {editData[headerRowIdx]?.map((h: string, idx: number) => (
-                  <th key={idx} className="border border-gray-300 dark:border-gray-700 px-3 py-2 font-semibold text-gray-700 dark:text-gray-100 text-left">{h}</th>
+                  <th key={idx} className="border border-gray-300 dark:border-gray-700 px-2 sm:px-3 py-2 font-semibold text-gray-700 dark:text-gray-100 text-left whitespace-nowrap">{h}</th>
                 ))}
-                <th className="border border-gray-300 dark:border-gray-700 px-3 py-2 font-semibold text-gray-700 dark:text-gray-100 text-center">Remove</th>
+                <th className="border border-gray-300 dark:border-gray-700 px-2 sm:px-3 py-2 font-semibold text-gray-700 dark:text-gray-100 text-center whitespace-nowrap">Remove</th>
               </tr>
             </thead>
             <tbody>
               {editData.slice(headerRowIdx + 1).map((row, rIdx) => (
                 <tr key={rIdx} className="hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors">
                   {row.map((cell: string, cIdx: number) => (
-                    <td key={cIdx} className="border border-gray-200 dark:border-gray-700 px-3 py-1">
+                    <td key={cIdx} className="border border-gray-200 dark:border-gray-700 px-2 sm:px-3 py-1">
                       <input
-                        className="w-full border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
+                        className="w-full border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                         value={cell}
                         onChange={(e) => handleCellEdit(rIdx + headerRowIdx + 1, cIdx, e.target.value)}
                       />
                     </td>
                   ))}
-                  <td className="border border-gray-200 dark:border-gray-700 px-3 py-1 text-center">
+                  <td className="border border-gray-200 dark:border-gray-700 px-2 sm:px-3 py-1 text-center">
                     <button
-                      className="text-xs text-red-600 dark:text-red-400 hover:underline font-semibold"
+                      className="text-xs sm:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
                       onClick={() => handleRemoveRow(rIdx + headerRowIdx + 1)}
                     >
                       Remove

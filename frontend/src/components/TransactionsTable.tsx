@@ -24,37 +24,37 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   handleLimitChange,
   sortConfig,
 }) => (
-  <div className="w-full max-w-4xl mx-auto bg-white shadow rounded p-2 mb-3">
-    <h2 className="text-lg font-semibold mb-1">Transactions</h2>
+  <div className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow rounded p-2 mb-3">
+    <h2 className="text-lg font-semibold mb-1 text-gray-800 dark:text-gray-100">Transactions</h2>
     <div className="overflow-x-auto">
       <table className="min-w-full table-auto text-sm">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("date")}>
-              Date {sortConfig.key === "date" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="px-2 py-1 cursor-pointer text-gray-700 dark:text-gray-100" onClick={() => handleSort("date")}> 
+              Date {sortConfig.key === "date" ? (sortConfig.direction === "asc" ? "\u25b2" : "\u25bc") : ""}
             </th>
-            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("description")}>
-              Description {sortConfig.key === "description" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+            <th className="px-2 py-1 cursor-pointer text-gray-700 dark:text-gray-100" onClick={() => handleSort("description")}> 
+              Description {sortConfig.key === "description" ? (sortConfig.direction === "asc" ? "\u25b2" : "\u25bc") : ""}
             </th>
-            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("credit")}>
-              Credit {sortConfig.key === "credit" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+            <th className="px-2 py-1 cursor-pointer text-gray-700 dark:text-gray-100" onClick={() => handleSort("credit")}> 
+              Credit {sortConfig.key === "credit" ? (sortConfig.direction === "asc" ? "\u25b2" : "\u25bc") : ""}
             </th>
-            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("debit")}>
-              Debit {sortConfig.key === "debit" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+            <th className="px-2 py-1 cursor-pointer text-gray-700 dark:text-gray-100" onClick={() => handleSort("debit")}> 
+              Debit {sortConfig.key === "debit" ? (sortConfig.direction === "asc" ? "\u25b2" : "\u25bc") : ""}
             </th>
-            <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort("category")}>
-              Category {sortConfig.key === "category" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+            <th className="px-2 py-1 cursor-pointer text-gray-700 dark:text-gray-100" onClick={() => handleSort("category")}> 
+              Category {sortConfig.key === "category" ? (sortConfig.direction === "asc" ? "\u25b2" : "\u25bc") : ""}
             </th>
           </tr>
         </thead>
         <tbody>
           {filteredTransactions.map((tx, idx) => (
-            <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50" : ""}>
-              <td className="px-2 py-1">{tx.date}</td>
-              <td className="px-2 py-1">{tx.description ?? tx.narration}</td>
-              <td className="px-2 py-1 text-right">{tx.credit ?? ""}</td>
-              <td className="px-2 py-1 text-right">{tx.debit ?? ""}</td>
-              <td className="px-2 py-1">{tx.category}</td>
+            <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-900"}>
+              <td className="px-2 py-1 text-gray-700 dark:text-gray-100">{tx.date}</td>
+              <td className="px-2 py-1 text-gray-700 dark:text-gray-100">{tx.description ?? tx.narration}</td>
+              <td className="px-2 py-1 text-right text-gray-700 dark:text-gray-100">{tx.credit ?? ""}</td>
+              <td className="px-2 py-1 text-right text-gray-700 dark:text-gray-100">{tx.debit ?? ""}</td>
+              <td className="px-2 py-1 text-gray-700 dark:text-gray-100">{tx.category}</td>
             </tr>
           ))}
         </tbody>
